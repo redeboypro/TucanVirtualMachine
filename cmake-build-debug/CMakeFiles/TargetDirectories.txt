@@ -1,0 +1,3 @@
+C:/TucanEcosystem/TucanVirtualMachine/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/TucanEcosystem/TucanVirtualMachine/cmake-build-debug/CMakeFiles/TucanVirtualMachine.dir
+C:/TucanEcosystem/TucanVirtualMachine/cmake-build-debug/CMakeFiles/rebuild_cache.dir
