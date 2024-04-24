@@ -12,26 +12,6 @@ void TucanProgram::Execute() {
                 mPushCStr(true);
                 break;
             }
-            case ConcatCStr: {
-                auto bStrLength = mStackBuffer.PopInt16();
-                auto bStrPtr = mStackBuffer.PopCStr(bStrLength);
-
-                auto aStrLength = mStackBuffer.PopInt16();
-                auto aStrPtr = mStackBuffer.PopCStr(aStrLength);
-
-                auto destStrLength = static_cast<Int16>(aStrLength + bStrLength);
-                Byte* destStrPtr = new Byte[destStrLength];
-
-                memcpy(destStrPtr, aStrPtr, aStrLength);
-                memcpy(destStrPtr + aStrLength, bStrPtr, bStrLength);
-
-                mStackBuffer.PutCStr(bStrPtr, bStrLength);
-
-                delete[] aStrPtr;
-                delete[] bStrPtr;
-                delete[] destStrPtr;
-                break;
-            }
             case PrintCStr: {
                 auto strLength = mStackBuffer.PopInt16();
 
