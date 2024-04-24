@@ -73,7 +73,7 @@ class TucanBuffer
 {
 private:
     Byte* mStack;
-    Int32 mStackPtr = -1;
+    Int32 mStackPtr = 0;
 
 public:
     explicit TucanBuffer(Byte* data);

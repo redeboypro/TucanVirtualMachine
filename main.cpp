@@ -3,9 +3,9 @@
 
 int main() {
     Byte byteCode[] = {
-            PushRCStr, 0x5, 0x0, 'H', 'e', 'l', 'l', 'o',
-            PushRCStr, 0x6, 0x0, ' ', 'w', 'o', 'r', 'l', 'd',
-            PrintCStr,
+            PushCStr, 0x5, 0x0, 'H', 'e', 'l', 'l', 'o',
+            PushCStr, 0x7, 0x0, ' ', 'W', 'o', 'r', 'l', 'd', '!',
+            ConcatCStr,
             PrintCStr,
             Exit
     };

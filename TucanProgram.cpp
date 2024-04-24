@@ -12,6 +12,26 @@ void TucanProgram::Execute() {
                 mPushCStr(true);
                 break;
             }
+            case ConcatCStr: {
+                auto aStrLength = mStackBuffer.PopInt16();
+                auto aStrPtr = mStackBuffer.PopCStr(aStrLength);
+
+                auto bStrLength = mStackBuffer.PopInt16();
+                auto bStrPtr = mStackBuffer.PopCStr(bStrLength);
+
+                auto destStrLength = static_cast<Int16>(aStrLength + bStrLength);
+                Byte* destStrPtr = new Byte[destStrLength];
+
+                std::memcpy(destStrPtr, aStrPtr, aStrLength);
+                std::memcpy(destStrPtr + aStrLength, bStrPtr, bStrLength);
+
+                mStackBuffer.PutCStr(destStrPtr, destStrLength);
+
+                delete[] aStrPtr;
+                delete[] bStrPtr;
+                delete[] destStrPtr;
+                break;
+            }
             case PrintCStr: {
                 auto strLength = mStackBuffer.PopInt16();
 
@@ -73,26 +93,25 @@ Byte* TucanProgram::ReadCStr(Int16 length) {
 }
 
 Byte TucanBuffer::PopByte() {
-    Byte value = mStack[mStackPtr];
-    mStackPtr--;
+    Byte value = mStack[--mStackPtr];
     return value;
 }
 
 Int16 TucanBuffer::PopInt16() {
-    Int16 value = *(Int16*)&mStack[mStackPtr];
     mStackPtr -= I16Mem;
+    Int16 value = *(Int16*)&mStack[mStackPtr];
     return value;
 }
 
 Int32 TucanBuffer::PopInt32() {
-    Int32 value = *(Int32*)&mStack[mStackPtr];
     mStackPtr -= I32Mem;
+    Int32 value = *(Int32*)&mStack[mStackPtr];
     return value;
 }
 
 Float32 TucanBuffer::PopFloat32() {
-    Float32 value = *(Float32*)&mStack[mStackPtr];
     mStackPtr -= F32Mem;
+    Float32 value = *(Float32*)&mStack[mStackPtr];
     return value;
 }
 
@@ -107,22 +126,23 @@ Byte* TucanBuffer::PopCStr(Int16 length) {
 }
 
 void TucanBuffer::PutByte(Byte value) {
-    mStack[++mStackPtr] = value;
+    mStack[mStackPtr] = value;
+    mStackPtr++;
 }
 
 void TucanBuffer::PutInt16(Int16 value) {
-    mStackPtr += I16Mem;
     *(Int16*)&mStack[mStackPtr] = value;
+    mStackPtr += I16Mem;
 }
 
 void TucanBuffer::PutInt32(Int32 value) {
-    mStackPtr += I32Mem;
     *(Int32*)&mStack[mStackPtr] = value;
+    mStackPtr += I32Mem;
 }
 
 void TucanBuffer::PutFloat32(Float32 value) {
-    mStackPtr += F32Mem;
     *(Float32*)&mStack[mStackPtr] = value;
+    mStackPtr += F32Mem;
 }
 
 void TucanBuffer::PutCStr(const Byte* value, Int16 length, bool reversed) {
