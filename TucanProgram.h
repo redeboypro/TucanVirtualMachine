@@ -10,54 +10,54 @@ using Float32       =      float;
 using Byte          =       char;
 
 typedef enum : Byte {
-    Push16,
-    Push32,
+    VmPushByte,
+    VmPushFloat32,
+    VmPushInt32,
+    VmPushInt16,
+    VmPushCStr,
 
-    AndInt16,
-    OrInt16,
+    VmAndInt16,
+    VmOrInt16,
 
-    AndInt32,
-    OrInt32,
+    VmAndInt32,
+    VmOrInt32,
 
-    GInt16,
-    LInt16,
-    EInt16,
+    VmGInt16,
+    VmLInt16,
+    VmEInt16,
 
-    GInt32,
-    LInt32,
-    EInt32,
+    VmGInt32,
+    VmLInt32,
+    VmEInt32,
 
-    AddInt16,
-    SubInt16,
-    MulInt16,
-    DivInt16,
+    VmAddInt16,
+    VmSubInt16,
+    VmMulInt16,
+    VmDivInt16,
 
-    AddInt32,
-    SubInt32,
-    MulInt32,
-    DivInt32,
+    VmAddInt32,
+    VmSubInt32,
+    VmMulInt32,
+    VmDivInt32,
 
-    Store16,
-    Load16,
+    VmStore16,
+    VmLoad16,
 
-    Store32,
-    Load32,
+    VmStore32,
+    VmLoad32,
 
-    PrintInt32,
+    VmEqualCStr,
+    VmCatCStr,
 
-    PushCStr,
-    PushRCStr,
+    VmStoreCStr,
+    VmLoadCStr,
 
-    EqualCStr,
-    ConcatCStr,
+    VmPrtInt16,
+    VmPrtInt32,
+    VmPrtCStr,
 
-    StoreCStr,
-    LoadCStr,
-
-    PrintCStr,
-
-    Jmp,
-    Exit
+    VmJmp,
+    VmExit
 } InstructionSet;
 
 const Int32 I16Mem  =   sizeof(Int16);
@@ -80,12 +80,6 @@ public:
     explicit TucanBuffer(Int32 size);
     ~TucanBuffer();
 
-    Byte ReadByte();
-    Int16 ReadInt16();
-    Int32 ReadInt32();
-    Float32 ReadFloat32();
-    Byte* ReadCStr(Int16 length);
-
     Byte PopByte();
     Int16 PopInt16();
     Int32 PopInt32();
@@ -96,7 +90,7 @@ public:
     void PutInt16(Int16 value);
     void PutInt32(Int32 value);
     void PutFloat32(Float32 value);
-    void PutCStr(const Byte* value, Int16 length, bool reversed = false);
+    void PutCStr(const Byte* value, Int16 length);
 };
 
 class TucanProgram {
@@ -104,7 +98,6 @@ private:
     Int32 mByteCodePtr = 0;
     Byte* mByteCode;
     TucanBuffer mStackBuffer;
-    void mPushCStr(bool reversed = false);
 public:
     explicit TucanProgram(Byte* byteCode, Int32 stackSize);
     ~TucanProgram() = default;

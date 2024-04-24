@@ -3,11 +3,15 @@
 
 int main() {
     Byte byteCode[] = {
-            PushCStr, 0x5, 0x0, 'H', 'e', 'l', 'l', 'o',
-            PushCStr, 0x7, 0x0, ' ', 'W', 'o', 'r', 'l', 'd', '!',
-            ConcatCStr,
-            PrintCStr,
-            Exit
+            VmPushInt16, 0x2, 0x0,
+            VmPushInt16, 0x3, 0x0,
+            VmAddInt16,
+
+            VmPushInt16, 0x5, 0x0,
+            VmAddInt16,
+
+            VmPrtInt16,
+            VmExit
     };
 
     auto program = new TucanProgram(byteCode, 256);

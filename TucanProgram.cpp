@@ -2,28 +2,53 @@
 #include "TucanProgram.h"
 
 void TucanProgram::Execute() {
-    for (; mByteCode[mByteCodePtr] != Exit; ++mByteCodePtr) {
+    for (; mByteCode[mByteCodePtr] != VmExit; ++mByteCodePtr) {
         switch (mByteCode[mByteCodePtr]) {
-            case PushCStr: {
-                mPushCStr();
+            case VmPushByte: {
+                mStackBuffer.PutByte(ReadByte());
                 break;
             }
-            case PushRCStr: {
-                mPushCStr(true);
+            case VmPushInt16: {
+                mStackBuffer.PutInt16(ReadInt16());
                 break;
             }
-            case ConcatCStr: {
+            case VmPushInt32: {
+                mStackBuffer.PutInt32(ReadInt32());
+                break;
+            }
+            case VmPushFloat32: {
+                mStackBuffer.PutFloat32(ReadFloat32());
+                break;
+            }
+            case VmPushCStr: {
+                auto strLength = ReadInt16();
+                auto strPtr = ReadCStr(strLength);
+
+                mStackBuffer.PutCStr(strPtr, strLength);
+                delete[] strPtr;
+                break;
+            }
+            case VmAddInt16: {
+                mStackBuffer.PutInt16(static_cast<Int16>(mStackBuffer.PopInt16() + mStackBuffer.PopInt16()));
+                break;
+            }
+            case VmCatCStr: {
                 auto aStrLength = mStackBuffer.PopInt16();
-                auto aStrPtr = mStackBuffer.PopCStr(aStrLength);
+                auto* aStrPtr = mStackBuffer.PopCStr(aStrLength);
 
                 auto bStrLength = mStackBuffer.PopInt16();
-                auto bStrPtr = mStackBuffer.PopCStr(bStrLength);
+                auto* bStrPtr = mStackBuffer.PopCStr(bStrLength);
 
                 auto destStrLength = static_cast<Int16>(aStrLength + bStrLength);
-                Byte* destStrPtr = new Byte[destStrLength];
+                auto* destStrPtr = new Byte[destStrLength];
 
-                std::memcpy(destStrPtr, aStrPtr, aStrLength);
-                std::memcpy(destStrPtr + aStrLength, bStrPtr, bStrLength);
+                for (int i = 0; i < aStrLength; i++) {
+                    destStrPtr[i] = aStrPtr[aStrLength - i - 1];
+                }
+
+                for (int i = 0; i < bStrLength; i++) {
+                    destStrPtr[aStrLength + i] = bStrPtr[bStrLength - i - 1];
+                }
 
                 mStackBuffer.PutCStr(destStrPtr, destStrLength);
 
@@ -32,9 +57,12 @@ void TucanProgram::Execute() {
                 delete[] destStrPtr;
                 break;
             }
-            case PrintCStr: {
+            case VmPrtInt16: {
+                std::cout << mStackBuffer.PopInt16();
+                break;
+            }
+            case VmPrtCStr: {
                 auto strLength = mStackBuffer.PopInt16();
-
                 auto strPtr = mStackBuffer.PopCStr(strLength);
 
                 for (Int16 ci = 0; ci < strLength; ++ci) {
@@ -46,14 +74,6 @@ void TucanProgram::Execute() {
             }
         }
     }
-}
-
-void TucanProgram::mPushCStr(bool reversed) {
-    auto strLength = ReadInt16();
-    auto strPtr = ReadCStr(strLength);
-
-    mStackBuffer.PutCStr(strPtr, strLength, reversed);
-    delete[] strPtr;
 }
 
 TucanProgram::TucanProgram(Byte *byteCode, Int32 stackSize) :
@@ -86,7 +106,7 @@ Byte* TucanProgram::ReadCStr(Int16 length) {
     Byte* strBuffer = new Byte[length];
 
     for (Int32 i = 0; i < length; ++i) {
-        strBuffer[i] = ReadByte();
+        strBuffer[length - i - 1] = ReadByte();
     }
 
     return strBuffer;
@@ -145,21 +165,12 @@ void TucanBuffer::PutFloat32(Float32 value) {
     mStackPtr += F32Mem;
 }
 
-void TucanBuffer::PutCStr(const Byte* value, Int16 length, bool reversed) {
+void TucanBuffer::PutCStr(const Byte* value, Int16 length) {
     if (value == nullptr || length == 0)
         return;
 
-    Int16 ci = 0;
-    if (reversed) {
-        ci = static_cast<Int16>(length - 1);
-        for (; ci >= 0; --ci) {
-            PutByte(value[ci]);
-        }
-    }
-    else {
-        for (; ci < length; ++ci) {
-            PutByte(value[ci]);
-        }
+    for (Int16 ci = 0; ci < length; ++ci) {
+        PutByte(value[ci]);
     }
 
     PutInt16(length);
@@ -171,30 +182,4 @@ TucanBuffer::TucanBuffer(Int32 size) : mStack(new Byte[size]) {}
 
 TucanBuffer::~TucanBuffer() {
     delete[] mStack;
-}
-
-Byte TucanBuffer::ReadByte() {
-    return mStack[mStackPtr];
-}
-
-Int16 TucanBuffer::ReadInt16() {
-    return *(Int16*)&mStack[mStackPtr];
-}
-
-Int32 TucanBuffer::ReadInt32() {
-    return *(Int32*)&mStack[mStackPtr];
-}
-
-Float32 TucanBuffer::ReadFloat32() {
-    return *(Float32*)&mStack[mStackPtr];
-}
-
-Byte* TucanBuffer::ReadCStr(Int16 length) {
-    Byte* strBuffer = new Byte[length];
-
-    for (Int32 i = 0; i < length; ++i) {
-        strBuffer[i] = mStack[mStackPtr + i];
-    }
-
-    return strBuffer;
 }
