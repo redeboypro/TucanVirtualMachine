@@ -32,6 +32,22 @@ void TucanProgram::Execute() {
                 mStackBuffer.PutInt16(static_cast<Int16>(mStackBuffer.PopInt16() + mStackBuffer.PopInt16()));
                 break;
             }
+            case VmSubInt16: {
+                mStackBuffer.PutInt16(static_cast<Int16>(mStackBuffer.PopInt16() - mStackBuffer.PopInt16()));
+                break;
+            }
+            case VmMulInt16: {
+                mStackBuffer.PutInt16(static_cast<Int16>(mStackBuffer.PopInt16() * mStackBuffer.PopInt16()));
+                break;
+            }
+            case VmDivInt16: {
+                mStackBuffer.PutInt16(static_cast<Int16>(mStackBuffer.PopInt16() / mStackBuffer.PopInt16()));
+                break;
+            }
+            case VmRemInt16: {
+                mStackBuffer.PutInt16(static_cast<Int16>(mStackBuffer.PopInt16() % mStackBuffer.PopInt16()));
+                break;
+            }
             case VmCatCStr: {
                 auto aStrLength = mStackBuffer.PopInt16();
                 auto* aStrPtr = mStackBuffer.PopCStr(aStrLength);
@@ -70,6 +86,73 @@ void TucanProgram::Execute() {
                 }
 
                 delete[] strPtr;
+                break;
+            }
+            case VmSwapInt16Int16: {
+                auto rValue = mStackBuffer.PopInt16();
+                auto lValue = mStackBuffer.PopInt16();
+                mStackBuffer.PutInt16(rValue);
+                mStackBuffer.PutInt16(lValue);
+                break;
+            }
+            case VmSwapInt16Int32: {
+                auto rValue = mStackBuffer.PopInt32();
+                auto lValue = mStackBuffer.PopInt16();
+                mStackBuffer.PutInt32(rValue);
+                mStackBuffer.PutInt16(lValue);
+                break;
+            }
+            case VmSwapInt16Float32: {
+                auto rValue = mStackBuffer.PopFloat32();
+                auto lValue = mStackBuffer.PopInt16();
+                mStackBuffer.PutFloat32(rValue);
+                mStackBuffer.PutInt16(lValue);
+                break;
+            }
+            case VmSwapInt32Int16: {
+                auto rValue = mStackBuffer.PopInt16();
+                auto lValue = mStackBuffer.PopInt32();
+                mStackBuffer.PutInt16(rValue);
+                mStackBuffer.PutInt32(lValue);
+                break;
+            }
+            case VmSwapInt32Int32: {
+                auto rValue = mStackBuffer.PopInt32();
+                auto lValue = mStackBuffer.PopInt32();
+                mStackBuffer.PutInt32(rValue);
+                mStackBuffer.PutInt32(lValue);
+                break;
+            }
+            case VmSwapInt32Float32: {
+                auto rValue = mStackBuffer.PopFloat32();
+                auto lValue = mStackBuffer.PopInt32();
+                mStackBuffer.PutFloat32(rValue);
+                mStackBuffer.PutInt32(lValue);
+                break;
+            }
+            case VmSwapFloat32Int16: {
+                auto rValue = mStackBuffer.PopInt16();
+                auto lValue = mStackBuffer.PopFloat32();
+                mStackBuffer.PutInt16(rValue);
+                mStackBuffer.PutFloat32(lValue);
+                break;
+            }
+            case VmSwapFloat32Int32: {
+                auto rValue = mStackBuffer.PopInt32();
+                auto lValue = mStackBuffer.PopFloat32();
+                mStackBuffer.PutInt32(rValue);
+                mStackBuffer.PutFloat32(lValue);
+                break;
+            }
+            case VmSwapFloat32Float32: {
+                auto rValue = mStackBuffer.PopFloat32();
+                auto lValue = mStackBuffer.PopFloat32();
+                mStackBuffer.PutFloat32(rValue);
+                mStackBuffer.PutFloat32(lValue);
+                break;
+            }
+            case VmJmp: {
+                mByteCodePtr = ReadInt16() - 1;
                 break;
             }
         }

@@ -16,6 +16,29 @@ typedef enum : Byte {
     VmPushInt16,
     VmPushCStr,
 
+    VmSwapInt16Int16,
+    VmSwapInt16Int32,
+    VmSwapInt16Float32,
+
+    VmSwapInt32Int16,
+    VmSwapInt32Int32,
+    VmSwapInt32Float32,
+
+    VmSwapFloat32Int16,
+    VmSwapFloat32Int32,
+    VmSwapFloat32Float32,
+
+    VmCastInt16Int32,
+    VmCastInt32Int16,
+
+    VmCastInt16Float32,
+    VmCastFloat32Int16,
+
+    VmCastInt32Float32,
+    VmCastFloat32Int32,
+
+    VmBoolean,
+
     VmAndInt16,
     VmOrInt16,
 
@@ -30,27 +53,42 @@ typedef enum : Byte {
     VmLInt32,
     VmEInt32,
 
+    VmGFloat32,
+    VmLFloat32,
+    VmEFloat32,
+
     VmAddInt16,
     VmSubInt16,
     VmMulInt16,
     VmDivInt16,
+    VmRemInt16,
 
     VmAddInt32,
     VmSubInt32,
     VmMulInt32,
     VmDivInt32,
+    VmRemInt32,
 
-    VmStore16,
-    VmLoad16,
+    VmAddFloat32,
+    VmSubFloat32,
+    VmMulFloat32,
+    VmDivFloat32,
+    VmRemFloat32,
 
-    VmStore32,
-    VmLoad32,
+    VmStoreInt16,
+    VmLoadInt16,
 
-    VmEqualCStr,
-    VmCatCStr,
+    VmStoreInt32,
+    VmLoadInt32,
+
+    VmStoreFloat32,
+    VmLoadFloat32,
 
     VmStoreCStr,
     VmLoadCStr,
+
+    VmEqualCStr,
+    VmCatCStr,
 
     VmPrtInt16,
     VmPrtInt32,
